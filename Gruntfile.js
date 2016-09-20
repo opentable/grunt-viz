@@ -1,32 +1,44 @@
 /*
- * grunt-graphviz
- * https://github.com/euskadi31/grunt-contrib-graphviz
+ * grunt-viz
+ * https://github.com/duereg/grunt-viz
  *
- * Copyright (c) 2013 Axel Etcheverry
+ * Copyright (c) 2016 Matt Blair
  * Licensed under the MIT license.
  */
 
 'use strict';
 
 module.exports = function(grunt) {
-
   // Project configuration.
   grunt.initConfig({
     jshint: {
       all: [
         'Gruntfile.js',
-        'tasks/*.js'
+        'tasks/*.js',
+        '<%= nodeunit.tests %>'
       ],
       options: {
         jshintrc: '.jshintrc'
-      },
+      }
     },
-    graphviz: {
+
+    // Before generating any new files, remove any previously-created files.
+    clean: {
+      tests: ['tmp']
+    },
+
+    // Configuration to be run (and then tested).
+    viz: {
       schema: {
         files: {
-          './test/schema.svg': './test/schema.dot'
+          'tmp/schema.svg': './test/fixtures/schema.dot'
         }
       }
+    },
+
+    // Unit tests.
+    nodeunit: {
+      tests: ['test/*.spec.js']
     }
   });
 
@@ -35,10 +47,13 @@ module.exports = function(grunt) {
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-nodeunit');
+
+  // Whenever the "test" task is run, first clean the "tmp" dir, then run this
+  // plugin's task(s), then test the result.
+  grunt.registerTask('test', ['clean', 'viz', 'nodeunit']);
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', ['jshint']);
-
-  grunt.registerTask('test', ['graphviz']);
-
+  grunt.registerTask('default', ['jshint', 'test']);
 };
