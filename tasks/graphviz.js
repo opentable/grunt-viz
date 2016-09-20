@@ -1,6 +1,6 @@
 /*
  * grunt-viz
- * https://github.com/duereg/grunt-viz
+ * https://github.com/opentable/grunt-viz
  *
  * Copyright (c) 2016 Matt Blair
  * Licensed under the MIT license.
